@@ -47,24 +47,45 @@ def HelloNarrow():
 
 	print("We will need to use any possible grey, yellow, or green colors")
 	print("to be able to reduce the possible word choices.\n")
-
 	Guess()
 
-#Function for reducing array by eliminating greys
-def reduceGreys(greyLetter):
-	#remove entries from array that contain the grey letter
-	for y in Lines:
-		if greyLetter in y:
-			wordsToRemove.append(y)
+#Function to play the game for you
+def HelloPlay():
+	#Explain to the user
+	print("\nI will go ahead and play the game for you, but need some help.")
+	print("After every guess I make, I will need you to enter the word into the Wordle game/site.")
+	print("I will need you to give me the grey letters, the yellow letters, and the green letters")
 
+	choice = input("Please enter \'y\' to continue: ")
+	print(choice)
+	if(choice == 'y'):
+		initialGuess()
+	#The way to actually make the computer reduce possible letters
+	autoRun = True
+	for alpha in range(6):	
+		Guess(autoRun)
+		AutoGuess()
+
+
+#Function for the first Computer guess
+def initialGuess():
+	print("I am going to guess a random word for you to try: " + random.choice(Lines))
+
+def AutoGuess():
+	print("My next guess: " + random.choice(Lines))
+
+#Function for reducing array by eliminating greys
 #Overloaded function to reduce Greys
-def reduceGreys(greyLetter, yellowLetter):
+def reduceGreys(greyLetter, yellowLetter = None):
 	#edge case if there are multiple of a letter (ee) and one is grey while the other is yellow
 	#Check to make sure the grey is not also a yellow
 	for y in Lines:
 		if greyLetter in y:
-			if greyLetter != yellowLetter:
+			if yellowLetter is None:
 				wordsToRemove.append(y)
+			else:
+				if greyLetter != yellowLetter:
+					wordsToRemove.append(y)
 
 #Function for reducing array based on greens
 def reduceGreens(greenLetter, index):
@@ -88,9 +109,13 @@ def removeWords():
 			Lines.remove(words)
 
 #Function to run through a guess
-def Guess():
+def Guess(autoRun = None):
 	print("Please enter the amount of yellow letters in that guess.")
 	numYellow = int(input(">: "))
+
+	#make the yellow entry null to begin
+	yellowLetter = None
+
 	for x in range(numYellow):
 		yellowLetter = input("Please enter a yellow letter: ")
 		index = int(input("Please enter the index of the yellow letter: "))
@@ -101,12 +126,7 @@ def Guess():
 	for x in range(numGrey):
 		greyLetter = input("Please enter a grey letter: ")
 		print(greyLetter)
-		if(yellowLetter is None):
-			reduceGreys(greyLetter)
-
-		else:
-			reduceGreys(greyLetter, yellowLetter)
-
+		reduceGreys(greyLetter, yellowLetter)
 
 	print("Please enter the amount of green letters in that guess.")
 	numGreen = int(input(">: "))
@@ -136,8 +156,8 @@ def Guess():
 		goAgain = input("Enter \'y\' or \'n\' : ")
 	#If yes, run the guess function
 	if goAgain == 'y':
-		Guess()
-
+		if(autoRun is None):
+			Guess()
 
 #Welcome the player to the game
 print("\n\nWelcome to the Wordle Helper Program!\n\n")
@@ -145,11 +165,11 @@ print("Would you like me to help narrow down the posible words you should try?\n
 print("Or would you like me to try and play for you?\n")
 print("Type \'n\' for narrowing down or \'s\' for me to solve the puzzle!\n")
 choice = input(">: ")
+print (choice)
+if(choice == 's'):
+	#run the function for solving
+	HelloPlay()
 
 if(choice == 'n'):
 	#run the function for narrowing down
 	HelloNarrow()
-
-if(choice == 's'):
-	#run the function for solving
-	print("")
